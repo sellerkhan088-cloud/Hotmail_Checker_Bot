@@ -2649,7 +2649,7 @@ async def redeem_coupon_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
 
 
-# ── Admin plan management commands ────────────────────────────────────────��───
+# ── Admin plan management commands ─────────────────��──────────────────────��───
 
 async def createplan_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Admin: /createplan Name Price Days [Threads] [DailyLimit] [Description]"""
@@ -2974,6 +2974,12 @@ def main():
     from core.config import GLOBAL_PROXY_FILE
     from core.proxy_manager import imap_pool
     from core.config import PROXY_HEALTH_INTERVAL
+
+    # Python 3.14 compatibility: ensure event loop exists
+    try:
+        asyncio.get_event_loop()
+    except RuntimeError:
+        asyncio.set_event_loop(asyncio.new_event_loop())
 
     # Init DB
     init_db()
