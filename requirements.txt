@@ -1,0 +1,23 @@
+# Core
+python-telegram-bot==20.7
+sqlalchemy==2.0.25
+aiohttp==3.9.1
+requests==2.31.0
+python-dotenv==1.0.0
+
+# TLS fingerprinting (important for bypass)
+curl-cffi==0.6.2
+
+# Database drivers
+# SQLite — built into Python, no install needed
+# PostgreSQL (optional):
+# psycopg2-binary==2.9.9
+
+# Performance
+xxhash==3.4.1
+
+# Optional monitoring
+psutil==5.9.8
+
+# 2FA/OTP (optional)
+pyotp==2.9.0
