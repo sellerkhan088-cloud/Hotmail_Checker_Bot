@@ -15,7 +15,7 @@ import secrets
 import json
 import threading
 import tempfile
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Optional, Dict, List
 
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
@@ -91,14 +91,14 @@ def get_or_create_user(tid: int, uname: str = None, fname: str = None) -> User:
             db.commit()
             db.refresh(u)
         else:
-            u.last_active = datetime.now(datetime.UTC)
+            u.last_active = datetime.now(timezone.utc)
             if uname: u.username = uname
             if fname: u.first_name = fname
             db.commit()
             db.refresh(u)
-        if u.last_reset and u.last_reset.date() < datetime.now(datetime.UTC).date():
+        if u.last_reset and u.last_reset.date() < datetime.now(timezone.utc).date():
             u.daily_lines_used = 0
-            u.last_reset = datetime.now(datetime.UTC)
+            u.last_reset = datetime.now(timezone.utc)
             db.commit()
             db.refresh(u)
         return u
@@ -561,7 +561,7 @@ async def button_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
             banned = db.query(User).filter(User.is_banned == True).count()
             vip = db.query(User).filter(User.plan != "free").count()
             active = db.query(User).filter(
-                User.last_active >= datetime.now(datetime.UTC) - timedelta(hours=24)
+                User.last_active >= datetime.now(timezone.utc) - timedelta(hours=24)
             ).count()
         finally:
             db.close()
@@ -757,7 +757,7 @@ async def addvip_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE):
             u = db.query(User).filter(User.telegram_id == target_id).first()
             if u:
                 u.plan = plan
-                u.plan_expires = datetime.now(datetime.UTC) + timedelta(days=days)
+                u.plan_expires = datetime.now(timezone.utc) + timedelta(days=days)
                 db.commit()
                 await update.message.reply_text(f"✅ User `{target_id}` upgraded to *{plan.upper()}* for {days} days!", parse_mode='Markdown')
             else:
@@ -2116,7 +2116,7 @@ async def on_scan_complete(job, engine):
 # New Commands
 # ═══════════════════════════════════════════════════════════
 
-_BOT_START_TIME = datetime.now(datetime.UTC)
+_BOT_START_TIME = datetime.now(timezone.utc)
 
 async def mystats_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Personal stats card — detailed breakdown."""
