@@ -1,5 +1,5 @@
 # Core
-python-telegram-bot==20.7
+python-telegram-bot==21.3
 sqlalchemy==2.0.35
 aiohttp==3.9.1
 requests==2.31.0

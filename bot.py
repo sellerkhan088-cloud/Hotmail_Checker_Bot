@@ -91,14 +91,14 @@ def get_or_create_user(tid: int, uname: str = None, fname: str = None) -> User:
             db.commit()
             db.refresh(u)
         else:
-            u.last_active = datetime.utcnow()
+            u.last_active = datetime.now(datetime.UTC)
             if uname: u.username = uname
             if fname: u.first_name = fname
             db.commit()
             db.refresh(u)
-        if u.last_reset and u.last_reset.date() < datetime.utcnow().date():
+        if u.last_reset and u.last_reset.date() < datetime.now(datetime.UTC).date():
             u.daily_lines_used = 0
-            u.last_reset = datetime.utcnow()
+            u.last_reset = datetime.now(datetime.UTC)
             db.commit()
             db.refresh(u)
         return u
@@ -561,7 +561,7 @@ async def button_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
             banned = db.query(User).filter(User.is_banned == True).count()
             vip = db.query(User).filter(User.plan != "free").count()
             active = db.query(User).filter(
-                User.last_active >= datetime.utcnow() - timedelta(hours=24)
+                User.last_active >= datetime.now(datetime.UTC) - timedelta(hours=24)
             ).count()
         finally:
             db.close()
@@ -757,7 +757,7 @@ async def addvip_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE):
             u = db.query(User).filter(User.telegram_id == target_id).first()
             if u:
                 u.plan = plan
-                u.plan_expires = datetime.utcnow() + timedelta(days=days)
+                u.plan_expires = datetime.now(datetime.UTC) + timedelta(days=days)
                 db.commit()
                 await update.message.reply_text(f"✅ User `{target_id}` upgraded to *{plan.upper()}* for {days} days!", parse_mode='Markdown')
             else:
@@ -1438,7 +1438,7 @@ async def _send_results(uid: int, context: ContextTypes.DEFAULT_TYPE, chat_id: i
             f"📁 File: {context.user_data.get('scan_filename', 'combo.txt')}\n"
             f"🗂️ Total: {s['total']:,}\n\n"
             f"✅ HIT: {s['hits']}\n"
-            f"🔒 2FA: {s['twofa']}\n"
+            f"��� 2FA: {s['twofa']}\n"
             f"❌ BAD: {s['bad']}\n"
             f"⚠️ ERROR: {s['errors']}"
             f"{extras_str}\n\n"
@@ -2116,7 +2116,7 @@ async def on_scan_complete(job, engine):
 # New Commands
 # ═══════════════════════════════════════════════════════════
 
-_BOT_START_TIME = datetime.utcnow()
+_BOT_START_TIME = datetime.now(datetime.UTC)
 
 async def mystats_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Personal stats card — detailed breakdown."""
@@ -2649,7 +2649,7 @@ async def redeem_coupon_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
 
 
-# ── Admin plan management commands ────────────────────────────────────────────
+# ── Admin plan management commands ────────────────────────────────────────��───
 
 async def createplan_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Admin: /createplan Name Price Days [Threads] [DailyLimit] [Description]"""
